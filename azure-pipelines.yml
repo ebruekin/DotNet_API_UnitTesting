@@ -40,24 +40,7 @@ stages:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
               ArtifactName: 'drop'
               publishLocation: 'Container'
-  - stage: Deploy
-    displayName: 'Deploy Stage'
-    dependsOn: Test # Deploy aşamasının Test aşamasından sonra çalışması için
-    jobs:
-      - job: DeployJob
-        displayName: 'Deploy Job'
-        steps:
-          - task: AzureRmWebAppDeployment@4
-            name: 'deployToAzure'
-            inputs:
-              ConnectionType: 'AzureRM'
-              azureSubscription: 'Azure for Students(49f57a7e-fb32-4222-8760-e1ec1a6765db)'
-              appType: 'webApp'
-              WebAppName: 'dotnet-api-for-unittest'
-              deployToSlotOrASE: true
-              ResourceGroupName: 'Beta'
-              SlotName: 'production'
-              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
 
   - stage: Test
     displayName: 'Test Stage'
@@ -77,4 +60,6 @@ stages:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
               ArtifactName: 'drop'
               publishLocation: 'Container'
+
+
 
