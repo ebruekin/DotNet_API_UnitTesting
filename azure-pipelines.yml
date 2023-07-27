@@ -37,3 +37,10 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
+
+- task: DotNetCoreCLI@2
+  name: 'RunUnitTest'
+  inputs:
+    command: test
+    projects: '**/API_xUnitTest.csproj'
+    configuration: '$(buildConfiguration)' 
