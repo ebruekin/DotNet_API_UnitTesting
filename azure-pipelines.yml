@@ -1,3 +1,8 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
 trigger:
   - master
 
@@ -29,28 +34,15 @@ stages:
               platform: '$(buildPlatform)'
               configuration: '$(buildConfiguration)'
 
-  - stage: Test
-    displayName: 'Test Stage'
-    jobs:
-      - job: TestJob
-        displayName: 'Test Job'
-        steps:
-          - task: DotNetCoreCLI@2
-            name: 'RunUnitTest'
-            inputs:
-              command: test
-              projects: '**/API_xUnitTest.csproj'
-              configuration: '$(buildConfiguration)'
-
-          # Publish the build artifacts after running the unit tests
+          # Publish the build artifacts after building the project
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
               ArtifactName: 'drop'
               publishLocation: 'Container'
-
   - stage: Deploy
     displayName: 'Deploy Stage'
+    dependsOn: Test # Deploy aşamasının Test aşamasından sonra çalışması için
     jobs:
       - job: DeployJob
         displayName: 'Deploy Job'
@@ -66,3 +58,23 @@ stages:
               ResourceGroupName: 'Beta'
               SlotName: 'production'
               packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
+  - stage: Test
+    displayName: 'Test Stage'
+    jobs:
+      - job: TestJob
+        displayName: 'Test Job'
+        steps:
+          - task: DotNetCoreCLI@2
+            name: 'RunUnitTest'
+            inputs:
+              command: test
+              projects: '**/API_xUnitTest.csproj'
+              configuration: '$(buildConfiguration)'
+          # Publish the build artifacts after running the unit tests
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
+
