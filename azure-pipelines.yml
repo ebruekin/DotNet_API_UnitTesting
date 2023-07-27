@@ -52,3 +52,21 @@ stages:
               command: test
               projects: '**/API_xUnitTest.csproj'
               configuration: '$(buildConfiguration)'
+
+  - stage: Deploy
+    displayName: 'Deploy Stage'
+    jobs:
+      - job: DeployJob
+        displayName: 'Deploy Job'
+        steps:
+          - task: AzureRmWebAppDeployment@4
+            name: 'deployToAzure'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'Azure for Students(49f57a7e-fb32-4222-8760-e1ec1a6765db)'
+              appType: 'webApp'
+              WebAppName: 'dotnet-api-for-unittest'
+              deployToSlotOrASE: true
+              ResourceGroupName: 'Beta'
+              SlotName: 'production'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
